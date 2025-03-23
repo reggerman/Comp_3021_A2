@@ -1,0 +1,51 @@
+Run started:2025-03-23 21:57:18.065559
+
+Test results:
+>> Issue: [B605:start_process_with_a_shell] Starting a process with a shell, possible injection detected, security issue.
+   Severity: High   Confidence: High
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.3/plugins/b605_start_process_with_a_shell.html
+   Location: .\assignment1_code_sample (2).py:16:4
+15	def send_email(to, subject, body):
+16	    os.system(f'echo {body} | mail -s "{subject}" {to}')
+17	
+
+--------------------------------------------------
+>> Issue: [B310:blacklist] Audit url open for permitted schemes. Allowing use of file:/ or custom schemes is often unexpected.
+   Severity: Medium   Confidence: High
+   CWE: CWE-22 (https://cwe.mitre.org/data/definitions/22.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.3/blacklists/blacklist_calls.html#b310-urllib-urlopen
+   Location: .\assignment1_code_sample (2).py:20:11
+19	    url = 'http://insecure-api.com/get-data'
+20	    data = urlopen(url).read().decode()
+21	    return data
+
+--------------------------------------------------
+>> Issue: [B608:hardcoded_sql_expressions] Possible SQL injection vector through string-based query construction.
+   Severity: Medium   Confidence: Low
+   CWE: CWE-89 (https://cwe.mitre.org/data/definitions/89.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.3/plugins/b608_hardcoded_sql_expressions.html
+   Location: .\assignment1_code_sample (2).py:24:14
+23	def save_to_db(data):
+24	    query = f"INSERT INTO mytable (column1, column2) VALUES ('{data}', 'Another Value')"
+25	    connection = pymysql.connect(**db_config)
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 30
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 0
+		Medium: 2
+		High: 1
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 1
+		Medium: 0
+		High: 2
+Files skipped (0):

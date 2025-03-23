@@ -22,3 +22,9 @@ jobs:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Super-Linter Report
+        uses: actions/upload-artifact@v3
+        with:
+            name: super-linter-report
+            path: super-linter-report.txt
