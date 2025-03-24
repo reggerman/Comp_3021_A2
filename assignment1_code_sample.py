@@ -1,6 +1,11 @@
 import os
-import pymysql # type: ignore
+import pymysql  # type: ignore
 from urllib.request import urlopen
+from urllib.parse import urlparse
+import smtplib
+from email.mime.text import MIMEText
+
+import requests
 
 db_config = {
     'host': 'mydatabase.com',
@@ -13,18 +18,39 @@ def get_user_input():
     return user_input
 
 def send_email(to, subject, body):
-    os.system(f'echo {body} | mail -s "{subject}" {to}')
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = 'noreply@example.com'
+    msg['To'] = to
 
-def get_data():
-    url = 'http://insecure-api.ca/execute-data'
-    data = urlopen(url).read().decode()
-    return data
+    with smtplib.SMTP('localhost') as server:
+        server.send_message(msg)
 
+def get_data(url):
+    # Parse the URL
+    parsed_url = urlparse(url)
+    
+    # Validate the URL scheme
+    if parsed_url.scheme not in ['http', 'https']:
+        raise ValueError("Invalid URL scheme. Only HTTP and HTTPS are allowed.")
+    
+    # Validate the network location (hostname)
+    if not parsed_url.netloc:
+        raise ValueError("Invalid URL. Missing network location (hostname).")
+    
+    # Use requests to fetch the data
+    try:
+        response = requests.get(url,timeout=5,verify=True)
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+        return response.text
+    except requests.exceptions.RequestException as e:
+        raise RuntimeError(f"Failed to fetch data from the URL: {e}")
+    
 def save_to_db(data):
-    query = f"INSERT INTO mytable (column1, column2) VALUES ('{data}', 'Another Value')"
+    query = "INSERT INTO mytable (column1, column2) VALUES (%s, %s)"
     connection = pymysql.connect(**db_config)
     cursor = connection.cursor()
-    cursor.execute(query)
+    cursor.execute(query, (data, 'Another Value'))
     connection.commit()
     cursor.close()
     connection.close()
