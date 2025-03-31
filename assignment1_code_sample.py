@@ -19,6 +19,7 @@ def get_user_input():
 
 
 def send_email(to, subject, body):
+    # We removed the fact it was using 
     msg = MIMEText(body)
     msg["Subject"] = subject
     msg["From"] = "noreply@example.com"
@@ -30,10 +31,12 @@ def send_email(to, subject, body):
 
 def get_data(url):
     # Parse the URL
+    # I see this as like fragmenting the incoming string/url to check it's 
+    # validity. 
     parsed_url = urlparse(url)
 
-    # Validate the URL scheme
-    if parsed_url.scheme not in ["http", "https"]:
+    # Validate the URL scheme (This looks for the https part of the url.)
+    if parsed_url.scheme not in ["https"]:
         raise ValueError("Invalid URL scheme.")
 
     # Validate the network location (hostname)
@@ -50,6 +53,7 @@ def get_data(url):
 
 
 def save_to_db(data):
+    #This should fix the CWE-89 Issue
     query = "INSERT INTO mytable (column1, column2) VALUES (%s, %s)"
     connection = pymysql.connect(**db_config)
     cursor = connection.cursor()
