@@ -2,7 +2,6 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 from urllib.parse import urlparse
-import pickle
 
 import pymysql  # type: ignore
 import requests
